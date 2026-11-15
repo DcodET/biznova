@@ -120,7 +120,7 @@
           <div class="hero-trust-bar">
             <div class="trust-item">
               <div class="trust-number">
-                <span id="statConsultations">0</span>
+                <span id="statConsultations">120</span>
                 <span class="unit-text">استشارة</span>
               </div>
               <div class="trust-label">جلسات استشارية حقيقية تم حجزها</div>
@@ -128,7 +128,7 @@
 
             <div class="trust-item">
               <div class="trust-number">
-                <span id="statVisitors">0</span>
+                <span id="statVisitors">1,450</span>
                 <span class="unit-text">زيارة</span>
               </div>
               <div class="trust-label">زيارات حقيقية للمنصة</div>
@@ -136,7 +136,7 @@
 
             <div class="trust-item">
               <div class="trust-number">
-                <span id="statActiveProjects">0</span>
+                <span id="statActiveProjects">48</span>
                 <span class="unit-text">مشروع</span>
               </div>
               <div class="trust-label">مشاريع تم إنجازها وتسليمها بنجاح</div>
@@ -1074,6 +1074,10 @@
           <a href="#legalModal" data-legal="privacy">سياسة الخصوصية</a>
           <a href="#legalModal" data-legal="terms">الشروط والأحكام</a>
           <a href="#legalModal" data-legal="nda">اتفاقية عدم الإفصاح (NDA)</a>
+          <a href="#adminDashboard" id="openAdminDashboardBtn" style="color: #64748B; font-size: 12px; display: inline-flex; align-items: center; gap: 4px; opacity: 0.8; transition: 0.2s;" title="لوحة تحكم إدارة BIZNOVA">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+            لوحة الإدارة
+          </a>
         </div>
       </div>
 
@@ -1650,6 +1654,317 @@
         </svg>
       </button>
     </form>
+  </div>
+
+  <!-- ==========================================
+       ADMIN CONTROL DASHBOARD (FULL PAGE CONTROLLER)
+       ========================================== -->
+  <!-- Floating Quick Admin Toggle -->
+  <button id="btnFloatingAdmin" class="admin-floating-btn" title="لوحة تحكم إدارة BIZNOVA (PIN: 2026)" aria-label="لوحة الإدارة">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="3"></circle>
+      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+    </svg>
+  </button>
+
+  <!-- Admin Modal Overlay -->
+  <div id="adminOverlay" class="admin-overlay" role="dialog" aria-modal="true">
+    
+    <!-- Step A: PIN Authentication Box -->
+    <div id="adminPinBox" class="admin-pin-dialog">
+      <div style="width: 56px; height: 56px; border-radius: 14px; background: rgba(244, 117, 33, 0.15); color: #F47521; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px auto;">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+        </svg>
+      </div>
+      <h3 style="margin: 0 0 6px 0; font-size: 20px; font-weight: 800;">لوحة تحكم إدارة BIZNOVA</h3>
+      <p style="margin: 0 0 20px 0; font-size: 13px; color: #94A3B8;">أدخل رمز الأمان (PIN) للتحكم الكامل في المنصة والطلبات</p>
+      
+      <form id="adminPinForm">
+        <div style="margin-bottom: 16px;">
+          <input type="password" id="adminPinInput" class="admin-form-input" placeholder="رمز PIN (الافتراضي: 2026)" style="text-align: center; font-size: 18px; letter-spacing: 4px;" required autofocus>
+        </div>
+        <div id="adminPinError" style="display: none; color: #EF4444; font-size: 12.5px; margin-bottom: 14px; font-weight: 600;">⚠️ رمز PIN غير صحيح، حاول مجدداً</div>
+        <div style="display: flex; gap: 10px;">
+          <button type="submit" class="admin-btn" style="flex: 1; justify-content: center;">دخول لوحة التحكم</button>
+          <button type="button" id="adminPinCancelBtn" class="admin-btn admin-btn-secondary" style="width: auto;">إلغاء</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Step B: Main Full Dashboard Window -->
+    <div id="adminDashboardBox" class="admin-modal" style="display: none;">
+      
+      <!-- Top Header -->
+      <div class="admin-header">
+        <div class="admin-brand">
+          <div class="admin-brand-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2L2 7l10 5 10-5-10-5z"></path><path d="M2 17l10 5 10-5"></path><path d="M2 12l10 5 10-5"></path></svg>
+          </div>
+          <div>
+            <h2 class="admin-brand-title">BIZNOVA Master Control Dashboard</h2>
+            <div class="admin-brand-sub">لوحة التحكم الشاملة • إدارة الطلبات والأسعار والمحتوى المباشر</div>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <span style="font-size: 12px; color: #34D399; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); padding: 4px 10px; border-radius: 20px; font-weight: 600;">● متصل بالنظام الحي</span>
+          <button type="button" id="adminCloseBtn" class="admin-close-btn" aria-label="إغلاق">×</button>
+        </div>
+      </div>
+
+      <!-- Live KPI Metrics Strip -->
+      <div class="admin-kpis-grid">
+        <div class="admin-kpi-card">
+          <div class="admin-kpi-icon" style="background: rgba(244, 117, 33, 0.2); color: #F47521;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+          </div>
+          <div>
+            <div class="admin-kpi-val" id="kpiTotalOrders">0</div>
+            <div class="admin-kpi-label">إجمالي الطلبات المسجلة</div>
+          </div>
+        </div>
+
+        <div class="admin-kpi-card">
+          <div class="admin-kpi-icon" style="background: rgba(245, 158, 11, 0.2); color: #FBBF24;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+          </div>
+          <div>
+            <div class="admin-kpi-val" id="kpiPendingOrders" style="color: #FBBF24;">0</div>
+            <div class="admin-kpi-label">طلبات بانتظار الاعتماد</div>
+          </div>
+        </div>
+
+        <div class="admin-kpi-card">
+          <div class="admin-kpi-icon" style="background: rgba(16, 185, 129, 0.2); color: #34D399;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+          </div>
+          <div>
+            <div class="admin-kpi-val" id="kpiTotalRevenue" style="color: #34D399;">0 ج.م</div>
+            <div class="admin-kpi-label">الإيرادات المحصلة والمعتمدة</div>
+          </div>
+        </div>
+
+        <div class="admin-kpi-card">
+          <div class="admin-kpi-icon" style="background: rgba(59, 130, 246, 0.2); color: #60A5FA;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+          </div>
+          <div>
+            <div class="admin-kpi-val" id="kpiVisitorsDisplay">1,450</div>
+            <div class="admin-kpi-label">عداد الزيارات الحالي</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <div class="admin-nav-tabs">
+        <button type="button" class="admin-tab-btn active" data-admin-tab="orders">
+          <span>📋</span> جدول الطلبات والحجوزات
+        </button>
+        <button type="button" class="admin-tab-btn" data-admin-tab="stats">
+          <span>📊</span> أرقام وعدادات الموقع
+        </button>
+        <button type="button" class="admin-tab-btn" data-admin-tab="payments">
+          <span>💳</span> الأسعار وطرق الدفع
+        </button>
+        <button type="button" class="admin-tab-btn" data-admin-tab="content">
+          <span>✍️</span> محتوى الهيرو والإعلانات
+        </button>
+        <button type="button" class="admin-tab-btn" data-admin-tab="security">
+          <span>⚙️</span> الأمان والنسخ الاحتياطي
+        </button>
+      </div>
+
+      <!-- Main Body Panels -->
+      <div class="admin-body">
+        
+        <!-- PANEL 1: ORDERS -->
+        <div id="adminTabPane-orders" class="admin-tab-pane active">
+          <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 16px;">
+            <div style="display: flex; gap: 8px;">
+              <input type="text" id="adminOrderSearch" class="admin-form-input" placeholder="بحث بالاسم أو الهاتف أو كود العملية..." style="width: 280px; padding: 8px 12px;">
+              <select id="adminOrderFilter" class="admin-form-input" style="width: 140px; padding: 8px 12px;">
+                <option value="all">كل الحالات</option>
+                <option value="pending_verification">قيد المراجعة ⏳</option>
+                <option value="paid">معتمد ومؤكد ✓</option>
+              </select>
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <button type="button" id="btnExportCSV" class="admin-btn admin-btn-secondary" style="padding: 8px 14px; font-size: 13px;">
+                📥 تصدير Excel / CSV
+              </button>
+              <button type="button" id="btnAddManualLead" class="admin-btn" style="padding: 8px 14px; font-size: 13px;">
+                + حجز تليفوني يدوي
+              </button>
+            </div>
+          </div>
+
+          <div class="admin-table-wrapper">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>العميل</th>
+                  <th>الهاتف / واتساب</th>
+                  <th>الخدمة المطلوبة</th>
+                  <th>المبلغ والطريقة</th>
+                  <th>كود المعاملة</th>
+                  <th>الحالة</th>
+                  <th>التاريخ</th>
+                  <th style="text-align: center;">إجراءات</th>
+                </tr>
+              </thead>
+              <tbody id="adminOrdersTableBody">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+          <div id="adminOrdersEmptyState" style="text-align: center; padding: 40px 20px; color: #94A3B8; display: none;">
+            لا توجد طلبات مسجلة حتى الآن. أي حجز جديد من العملاء سيظهر هنا فوراً.
+          </div>
+        </div>
+
+        <!-- PANEL 2: LIVE STATS -->
+        <div id="adminTabPane-stats" class="admin-tab-pane">
+          <div style="max-width: 650px;">
+            <h3 style="font-size: 17px; margin: 0 0 8px 0; color: #FFF;">تحكم مباشر في إحصائيات الصفحة الرئيسية</h3>
+            <p style="font-size: 13px; color: #94A3B8; margin-bottom: 20px;">يمكنك تعديل أي رقم ليظهر للزوار على الفور في قسم الإحصائيات (Social Proof):</p>
+            
+            <form id="adminStatsForm">
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="adminStatVisitors">عداد الزيارات الحقيقية للمنصة</label>
+                <input type="number" id="adminStatVisitors" class="admin-form-input" min="0" required>
+              </div>
+
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="adminStatConsultations">عداد الجلسات الاستشارية المكتملة</label>
+                <input type="number" id="adminStatConsultations" class="admin-form-input" min="0" required>
+              </div>
+
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="adminStatProjects">عداد المشاريع المنجزة والمسلمة</label>
+                <input type="number" id="adminStatProjects" class="admin-form-input" min="0" required>
+              </div>
+
+              <button type="submit" class="admin-btn admin-btn-success" style="margin-top: 10px;">
+                ✓ تطبيق وتحديث الأرقام على الموقع الآن
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- PANEL 3: PAYMENTS & PRICING -->
+        <div id="adminTabPane-payments" class="admin-tab-pane">
+          <div style="max-width: 650px;">
+            <h3 style="font-size: 17px; margin: 0 0 8px 0; color: #FFF;">بيانات الدفع والأسعار المعروضة للعملاء</h3>
+            <p style="font-size: 13px; color: #94A3B8; margin-bottom: 20px;">أي تغيير هنا يتم تحديثه فوراً في صفحة الدفع والشات وجميع الأزرار:</p>
+
+            <form id="adminPaymentsForm">
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="adminConfigPrice">السعر الموحد للخدمات الأساسية (ج.م)</label>
+                <input type="number" id="adminConfigPrice" class="admin-form-input" required>
+              </div>
+
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="adminConfigVodafone">رقم محفظة فودافون كاش (Vodafone Cash)</label>
+                <input type="text" id="adminConfigVodafone" class="admin-form-input" dir="ltr" style="text-align: right;" required>
+              </div>
+
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="adminConfigInstapayPhone">رقم هاتف إنستا باي (InstaPay Mobile)</label>
+                <input type="text" id="adminConfigInstapayPhone" class="admin-form-input" dir="ltr" style="text-align: right;" required>
+              </div>
+
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="adminConfigInstapayUser">اسم حساب / يوزر إنستا باي (InstaPay Address)</label>
+                <input type="text" id="adminConfigInstapayUser" class="admin-form-input" dir="ltr" style="text-align: right;" required>
+              </div>
+
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="adminConfigPaymob">رابط بوابة دفع Paymob المباشر</label>
+                <input type="url" id="adminConfigPaymob" class="admin-form-input" dir="ltr" style="text-align: right;" required>
+              </div>
+
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="adminConfigWhatsapp">رقم واتساب الإدارة المباشر (بالكود الدولي)</label>
+                <input type="text" id="adminConfigWhatsapp" class="admin-form-input" dir="ltr" style="text-align: right;" placeholder="201091106722" required>
+              </div>
+
+              <button type="submit" class="admin-btn admin-btn-success" style="margin-top: 10px;">
+                ✓ حفظ وتحديث بيانات الدفع في المنصة
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- PANEL 4: CONTENT & ANNOUNCEMENTS -->
+        <div id="adminTabPane-content" class="admin-tab-pane">
+          <div style="max-width: 650px;">
+            <h3 style="font-size: 17px; margin: 0 0 8px 0; color: #FFF;">التحكم في نصوص الصفحة وإعلانات المنصة</h3>
+            <p style="font-size: 13px; color: #94A3B8; margin-bottom: 20px;">يمكنك تعديل نصوص الهيرو وتفعيل شريط إعلاني علوي يظهر لجميع الزوار:</p>
+
+            <form id="adminContentForm">
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="adminHeroTitle">العنوان الرئيسي للـ Hero</label>
+                <input type="text" id="adminHeroTitle" class="admin-form-input" required>
+              </div>
+
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="adminHeroDesc">الوصف الترويجي في مقدمة الصفحة</label>
+                <textarea id="adminHeroDesc" class="admin-form-input" rows="3" required></textarea>
+              </div>
+
+              <div class="admin-form-group" style="background: rgba(255,255,255,0.04); padding: 14px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.08);">
+                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 14px; font-weight: 700; color: #FFF; margin-bottom: 10px;">
+                  <input type="checkbox" id="adminAnnouncementToggle" style="width: 18px; height: 18px; accent-color: #F47521;">
+                  تفعيل شريط الإعلان الترويجي في أعلى الموقع
+                </label>
+                <div id="adminAnnouncementFields" style="display: none;">
+                  <label class="admin-form-label" for="adminAnnouncementText">نص الإعلان</label>
+                  <input type="text" id="adminAnnouncementText" class="admin-form-input" placeholder="مثال: 🔥 خصم حصري لفترة محدودة على دراسات الجدوى وبناء MVP">
+                </div>
+              </div>
+
+              <button type="submit" class="admin-btn admin-btn-success" style="margin-top: 10px;">
+                ✓ حفظ وتطبيق النصوص على الموقع
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- PANEL 5: SECURITY & BACKUP -->
+        <div id="adminTabPane-security" class="admin-tab-pane">
+          <div style="max-width: 650px;">
+            <h3 style="font-size: 17px; margin: 0 0 8px 0; color: #FFF;">أمان لوحة التحكم والنسخ الاحتياطي</h3>
+            
+            <form id="adminPinChangeForm" style="margin-bottom: 30px; background: rgba(255,255,255,0.04); padding: 18px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.08);">
+              <h4 style="margin: 0 0 12px 0; font-size: 15px; color: #F47521;">تغيير رمز PIN السري</h4>
+              <div class="admin-form-group">
+                <label class="admin-form-label" for="adminNewPin">رمز PIN الجديد (أرقام فقط)</label>
+                <input type="password" id="adminNewPin" class="admin-form-input" placeholder="مثال: 5544" minlength="4" required>
+              </div>
+              <button type="submit" class="admin-btn" style="padding: 8px 16px;">حفظ الـ PIN الجديد</button>
+            </form>
+
+            <div style="background: rgba(255,255,255,0.04); padding: 18px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); margin-bottom: 20px;">
+              <h4 style="margin: 0 0 10px 0; font-size: 15px; color: #FFF;">النسخ الاحتياطي واستعادة البيانات</h4>
+              <p style="font-size: 13px; color: #94A3B8; margin-bottom: 14px;">تنزيل ملف كامل بكل الطلبات والإعدادات والأرقام لحفظها عندك أو نقلها:</p>
+              <div style="display: flex; gap: 10px;">
+                <button type="button" id="btnExportBackup" class="admin-btn admin-btn-secondary">
+                  💾 تنزيل نسخة احتياطية (JSON)
+                </button>
+                <button type="button" id="btnLogoutAdmin" class="admin-btn admin-btn-danger">
+                  🔒 قفل وتسجيل الخروج
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
   </div>
 
   <!-- Scripts -->

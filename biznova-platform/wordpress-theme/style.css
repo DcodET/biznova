@@ -1,0 +1,62 @@
+/*
+Theme Name: BIZNOVA - منصة الأعمال والريادة
+Theme URI: https://biznova.example.com
+Author: BIZNOVA Architecture & Design Team
+Author URI: https://biznova.example.com
+Description: Modern, blazing-fast, and high-converting WordPress Full Site Editing (FSE) block theme designed for entrepreneurial platforms, accelerators, and venture consultancies. Includes built-in secure Egyptian payment verification (Paymob, Vodafone Cash, InstaPay), live client stats, and Core Web Vitals score 95+.
+Version: 1.0.2
+Requires at least: 6.2
+Tested up to: 6.7
+Requires PHP: 8.0
+License: GNU General Public License v2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: biznova
+Tags: full-site-editing, block-patterns, rtl-language-support, custom-colors, grid-layout, wide-blocks
+*/
+
+/* Reset & CSS Custom Properties loaded via theme.json */
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=Readex+Pro:wght@400;500;600;700;800&display=swap');
+
+html {
+  scroll-behavior: smooth;
+  direction: rtl;
+}
+
+body {
+  font-family: 'Cairo', system-ui, -apple-system, sans-serif;
+  color: #0C1E3C;
+  background-color: #FFFFFF;
+}
+
+/* Custom Gutenberg Block Overrides */
+.wp-block-button__link {
+  transition: all 0.25s ease-in-out;
+}
+
+.wp-block-button__link:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(244, 117, 33, 0.4);
+}
+
+.is-style-outline-navy .wp-block-button__link {
+  background: transparent !important;
+  color: #0C1E3C !important;
+  border: 2px solid #0C1E3C !important;
+}
+
+.is-style-outline-navy .wp-block-button__link:hover {
+  background: #0C1E3C !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 10px 25px rgba(12, 30, 60, 0.25);
+}
+
+.biznova-card-hover {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1px solid #EDF2F7;
+}
+
+.biznova-card-hover:hover {
+  transform: translateY(-6px);
+  border-color: #F47521;
+  box-shadow: 0 16px 32px rgba(12, 30, 60, 0.08);
+}
