@@ -43,6 +43,8 @@ document.addEventListener('DOMContentLoaded', () => {
     localStorage.setItem('biznova_stats_clean_zero_v10', 'true');
   }
 
+  const FIREBASE_DB_URL = 'https://biznova-34a5c-default-rtdb.firebaseio.com';
+
   const LiveStats = {
     remoteData: null,
     get: function() {
@@ -86,102 +88,95 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     },
     init: function() {
-      // 1. If deployed in WordPress, sync live real-time stats from WordPress REST API / PHP
-      if (window.biznovaApiSettings) {
-        if (window.biznovaApiSettings.initialStats) {
-          this.remoteData = window.biznovaApiSettings.initialStats;
-          this.render();
-        }
+      // Real-time Cloud Synchronization via Google Firebase
+      fetch(`${FIREBASE_DB_URL}/stats.json`)
+        .then(res => res.json())
+        .then(cloudStats => {
+          if (cloudStats && typeof cloudStats === 'object') {
+            const curVis = typeof cloudStats.visitors === 'number' ? cloudStats.visitors : 0;
+            const newVis = curVis + 1;
+            this.remoteData = {
+              consultations: typeof cloudStats.consultations === 'number' ? cloudStats.consultations : 0,
+              visitors: newVis,
+              projects: typeof cloudStats.projects === 'number' ? cloudStats.projects : 0
+            };
+            this.render('visitors');
 
-        if (window.biznovaApiSettings.root) {
-          fetch(`${window.biznovaApiSettings.root}stats`)
-            .then(res => res.json())
-            .then(data => {
-              if (data && typeof data.consultations === 'number') {
-                this.remoteData = data;
-                this.render();
-              }
-            })
-            .catch(() => {
-              this.render();
-            });
-        }
-      } else {
-        // Standalone preview mode: track session visit starting from 0
-        // Track real visitor counts starting from 0, incrementing on each visit/reload
-        let currentVisits = parseInt(localStorage.getItem('biznova_stat_visitors') || '0', 10);
-        currentVisits += 1;
-        localStorage.setItem('biznova_stat_visitors', currentVisits);
-        this.render('visitors');
-      }
+            // Increment visitor count in central Firebase cloud
+            fetch(`${FIREBASE_DB_URL}/stats.json`, {
+              method: 'PATCH',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ visitors: newVis })
+            }).catch(() => {});
+          } else {
+            let cur = parseInt(localStorage.getItem('biznova_stat_visitors') || '0', 10) + 1;
+            localStorage.setItem('biznova_stat_visitors', cur);
+            this.render('visitors');
+          }
+        })
+        .catch(() => {
+          let cur = parseInt(localStorage.getItem('biznova_stat_visitors') || '0', 10) + 1;
+          localStorage.setItem('biznova_stat_visitors', cur);
+          this.render('visitors');
+        });
     },
     recordConsultation: function(clientName, serviceTitle, clientPhone = '', clientEmail = '', projectBrief = '', paymentInfo = {}) {
       const data = this.get();
       const isPaid = (paymentInfo.status === 'paid');
 
-      // Increment consultations counter on each booking
-      data.consultations += 1;
+      const leadPayload = {
+        name: clientName,
+        phone: clientPhone,
+        email: clientEmail,
+        service: serviceTitle,
+        brief: projectBrief,
+        txnId: paymentInfo.transactionId || ('REQ-' + Math.floor(100000 + Math.random() * 900000)),
+        method: paymentInfo.method || 'محفظة إلكترونية',
+        amount: paymentInfo.amount || '7,500 ج.م',
+        status: isPaid ? 'paid' : 'pending_verification',
+        date: new Date().toISOString()
+      };
 
-      // WordPress REST API synchronization with AES-256 server-side encryption
-      if (window.biznovaApiSettings && window.biznovaApiSettings.root) {
-        fetch(`${window.biznovaApiSettings.root}record`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-WP-Nonce': window.biznovaApiSettings.nonce
-          },
-          body: JSON.stringify({
-            type: 'consultation',
-            name: clientName,
-            phone: clientPhone,
-            email: clientEmail,
-            service: serviceTitle,
-            brief: projectBrief,
-            payment_status: paymentInfo.status || 'pending_verification',
-            payment_method: paymentInfo.method || 'محفظة إلكترونية',
-            transaction_id: paymentInfo.transactionId || '',
-            amount: paymentInfo.amount || ''
-          })
-        })
-        .then(res => res.json())
-        .then(updated => {
-          if (updated && typeof updated.consultations === 'number') {
-            this.remoteData = updated;
-          }
-          this.render('consultations');
-        })
-        .catch(() => {
-          this.render('consultations');
-        });
-      } else {
+      // 1. Post to Firebase Realtime Database
+      fetch(`${FIREBASE_DB_URL}/leads.json`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(leadPayload)
+      })
+      .then(() => {
+        // Increment consultations counter in Firebase cloud
+        fetch(`${FIREBASE_DB_URL}/stats.json`)
+          .then(r => r.json())
+          .then(stats => {
+            const curCons = (stats && typeof stats.consultations === 'number') ? stats.consultations : 0;
+            const newCons = curCons + 1;
+            fetch(`${FIREBASE_DB_URL}/stats.json`, {
+              method: 'PATCH',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ consultations: newCons })
+            }).then(() => {
+              if (this.remoteData) this.remoteData.consultations = newCons;
+              this.render('consultations');
+            });
+          });
+      })
+      .catch(() => {
+        data.consultations += 1;
         localStorage.setItem('biznova_stat_consultations', data.consultations);
         this.render('consultations');
+      });
 
-        // Store pending lead locally
-        let pendingLeads = [];
-        try {
-          pendingLeads = JSON.parse(localStorage.getItem('biznova_pending_leads') || '[]');
-        } catch(e) {}
-        pendingLeads.push({
-          name: clientName,
-          phone: clientPhone,
-          email: clientEmail,
-          service: serviceTitle,
-          brief: projectBrief,
-          txnId: paymentInfo.transactionId,
-          method: paymentInfo.method,
-          amount: paymentInfo.amount,
-          status: isPaid ? 'paid' : 'pending_verification',
-          date: new Date().toISOString()
-        });
-        localStorage.setItem('biznova_pending_leads', JSON.stringify(pendingLeads));
-      }
+      // 2. Also keep local storage backup
+      let pendingLeads = [];
+      try { pendingLeads = JSON.parse(localStorage.getItem('biznova_pending_leads') || '[]'); } catch(e) {}
+      pendingLeads.push(leadPayload);
+      localStorage.setItem('biznova_pending_leads', JSON.stringify(pendingLeads));
 
-      const txnBadge = paymentInfo.transactionId ? ` (${paymentInfo.transactionId})` : '';
+      const txnBadge = leadPayload.txnId ? ` (${leadPayload.txnId})` : '';
       if (isPaid) {
-        this.showToast(`🔥 تم تأكيد سداد وحجز استشارة لـ <strong>${clientName}</strong>!${txnBadge} إجمالي الاستشارات: <strong>${data.consultations}</strong>`);
+        this.showToast(`🔥 تم تأكيد سداد وحجز استشارة لـ <strong>${clientName}</strong>!${txnBadge}`);
       } else {
-        this.showToast(`⏳ تم استلام طلب الحجز لـ <strong>${clientName}</strong> برقم ${txnBadge} وهو قيد التدقيق والمطابقة البنكية.`);
+        this.showToast(`⏳ تم استلام طلب الحجز لـ <strong>${clientName}</strong> برقم ${txnBadge} وتسجيله في لوحة الإدارة.`);
       }
     },
     recordCompletedProject: function() {
