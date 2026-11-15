@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لوحة تحكم BIZNOVA المستقلة | Master Admin Dashboard</title>
+  <link rel="icon" type="image/jpeg" href="assets/images/biznova-logo.jpg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Readex+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #081220;
+      --card-bg: #0F1D30;
+      --card-border: rgba(255, 255, 255, 0.08);
+      --orange: #F47521;
+      --orange-hover: #FF9F43;
+      --green: #10B981;
+      --navy: #1E3E62;
+      --text: #F8FAFC;
+      --text-muted: #94A3B8;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Cairo', 'Readex Pro', sans-serif;
+      background: var(--bg-dark);
+      color: var(--text);
+      min-height: 100vh;
+      direction: rtl;
+    }
+    /* PIN Screen */
+    #pinOverlay {
+      position: fixed;
+      inset: 0;
+      background: var(--bg-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 99999;
+      padding: 20px;
+    }
+    .pin-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 18px;
+      padding: 36px 28px;
+      width: 100%;
+      max-width: 420px;
+      text-align: center;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6), 0 0 40px rgba(244, 117, 33, 0.1);
+    }
+    .pin-icon {
+      width: 58px;
+      height: 58px;
+      border-radius: 14px;
+      background: rgba(244, 117, 33, 0.15);
+      color: var(--orange);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+    }
+    .form-input {
+      width: 100%;
+      background: rgba(8, 18, 32, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #FFF;
+      font-family: inherit;
+      font-size: 15px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      transition: all 0.2s;
+    }
+    .form-input:focus {
+      outline: none;
+      border-color: var(--orange);
+      box-shadow: 0 0 0 3px rgba(244, 117, 33, 0.2);
+    }
+    .btn {
+      background: var(--orange);
+      color: #FFF;
+      border: none;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 700;
+      padding: 12px 20px;
+      border-radius: 10px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+    .btn:hover {
+      background: var(--orange-hover);
+      transform: translateY(-1px);
+    }
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.08);
+      color: #E2E8F0;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.12);
+      color: #FFF;
+    }
+    .btn-success {
+      background: var(--green);
+    }
+    .btn-success:hover {
+      background: #059669;
+    }
+    .btn-danger {
+      background: rgba(239, 68, 68, 0.15);
+      color: #F87171;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+    .btn-danger:hover {
+      background: #EF4444;
+      color: #FFF;
+    }
+    /* Main Layout */
+    .top-nav {
+      background: var(--card-bg);
+      border-bottom: 1px solid var(--card-border);
+      padding: 16px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .brand-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--orange), #FF9F43);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #FFF;
+    }
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+    /* KPI Cards */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .kpi-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 18px 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .kpi-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .kpi-val {
+      font-size: 24px;
+      font-weight: 800;
+      color: #FFF;
+      line-height: 1.2;
+    }
+    .kpi-label {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+    /* Tabs Nav */
+    .nav-tabs {
+      display: flex;
+      gap: 8px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 8px;
+      margin-bottom: 24px;
+      overflow-x: auto;
+    }
+    .tab-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 700;
+      padding: 10px 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+    .tab-btn:hover {
+      color: #FFF;
+      background: rgba(255, 255, 255, 0.05);
+    }
+    .tab-btn.active {
+      color: #FFF;
+      background: var(--orange);
+    }
+    .tab-pane {
+      display: none;
+    }
+    .tab-pane.active {
+      display: block;
+    }
+    /* Tables */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+    .table-responsive {
+      overflow-x: auto;
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: right;
+      font-size: 14px;
+    }
+    th {
+      background: rgba(30, 62, 98, 0.4);
+      color: #CBD5E1;
+      padding: 14px;
+      font-weight: 700;
+      border-bottom: 1px solid var(--card-border);
+      white-space: nowrap;
+    }
+    td {
+      padding: 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      color: #E2E8F0;
+      vertical-align: middle;
+    }
+    tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+    .badge-pending {
+      background: rgba(245, 158, 11, 0.15);
+      color: #FBBF24;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .badge-paid {
+      background: rgba(16, 185, 129, 0.15);
+      color: #34D399;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==========================================
+       PIN SECURITY SCREEN
+       ========================================== -->
+  <div id="pinOverlay">
+    <div class="pin-card">
+      <div class="pin-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+        </svg>
+      </div>
+      <h2 style="font-size: 22px; font-weight: 800; margin-bottom: 8px;">لوحة تحكم BIZNOVA</h2>
+      <p style="font-size: 13.5px; color: var(--text-muted); margin-bottom: 24px;">الرابط المستقل لمتابعة الطلبات والتحكم الكامل في المنصة</p>
+
+      <form id="pinForm">
+        <div style="margin-bottom: 18px;">
+          <input type="password" id="pinInput" class="form-input" placeholder="رمز PIN (الافتراضي: 2026)" style="text-align: center; font-size: 20px; letter-spacing: 4px;" required autofocus>
+        </div>
+        <div id="pinError" style="display: none; color: #EF4444; font-size: 13px; margin-bottom: 16px; font-weight: 700;">⚠️ رمز PIN غير صحيح!</div>
+        <button type="submit" class="btn" style="width: 100%;">دخول لوحة التحكم</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       MAIN ADMIN DASHBOARD
+       ========================================== -->
+  <div id="dashboardApp" style="display: none;">
+    
+    <!-- Top Nav -->
+    <header class="top-nav">
+      <div class="brand-group">
+        <div class="brand-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2L2 7l10 5 10-5-10-5z"></path><path d="M2 17l10 5 10-5"></path><path d="M2 12l10 5 10-5"></path></svg>
+        </div>
+        <div>
+          <h1 style="font-size: 18px; font-weight: 800; color: #FFF;">BIZNOVA Master Operations</h1>
+          <div style="font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 8px;">
+            <span>لوحة الإدارة المستقلة</span>
+            <span>•</span>
+            <span id="cloudSyncStatus" style="color: #10B981; font-weight: 700;">🟢 متصل بالسحابة (Firebase Live)</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 10px; align-items: center;">
+        <button type="button" id="btnRefreshData" class="btn btn-secondary" style="font-size: 13px; padding: 8px 14px;" title="تحديث مباشر للبيانات">
+          🔄 تحديث فوري
+        </button>
+        <a href="index.html" class="btn btn-secondary" style="font-size: 13px; padding: 8px 14px;">
+          🌐 الذهاب إلى الموقع
+        </a>
+        <button type="button" id="btnLogout" class="btn btn-danger" style="font-size: 13px; padding: 8px 14px;">
+          🔒 خروج
+        </button>
+      </div>
+    </header>
+
+    <div class="container">
+      
+      <!-- Top KPIs -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-icon" style="background: rgba(244, 117, 33, 0.2); color: var(--orange);">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+          </div>
+          <div>
+            <div class="kpi-val" id="kpiTotal">0</div>
+            <div class="kpi-label">إجمالي الطلبات المستلمة</div>
+          </div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-icon" style="background: rgba(245, 158, 11, 0.2); color: #FBBF24;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+          </div>
+          <div>
+            <div class="kpi-val" id="kpiPending" style="color: #FBBF24;">0</div>
+            <div class="kpi-label">طلبات بانتظار الاعتماد</div>
+          </div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-icon" style="background: rgba(16, 185, 129, 0.2); color: #34D399;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+          </div>
+          <div>
+            <div class="kpi-val" id="kpiRevenue" style="color: #34D399;">0 ج.م</div>
+            <div class="kpi-label">الإيرادات المعتمدة</div>
+          </div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-icon" style="background: rgba(59, 130, 246, 0.2); color: #60A5FA;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+          </div>
+          <div>
+            <div class="kpi-val" id="kpiVisitors">0</div>
+            <div class="kpi-label">عداد الزيارات الحالي للموقع</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <div class="nav-tabs">
+        <button type="button" class="tab-btn active" data-tab="orders">
+          <span>📋</span> جدول الطلبات والحجوزات
+        </button>
+        <button type="button" class="tab-btn" data-tab="stats">
+          <span>📊</span> أرقام وعدادات الموقع
+        </button>
+        <button type="button" class="tab-btn" data-tab="payments">
+          <span>💳</span> الأسعار وطرق الدفع
+        </button>
+      </div>
+
+      <!-- TAB 1: ORDERS -->
+      <div id="tab-orders" class="tab-pane active">
+        <div class="card">
+          <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 14px; margin-bottom: 20px;">
+            <div style="display: flex; gap: 10px;">
+              <input type="text" id="orderSearch" class="form-input" placeholder="بحث بالاسم أو الهاتف أو كود العملية..." style="width: 280px; padding: 10px 14px;">
+              <select id="orderFilter" class="form-input" style="width: 150px; padding: 10px 14px;">
+                <option value="all">كل الحالات</option>
+                <option value="pending_verification">قيد المراجعة ⏳</option>
+                <option value="paid">معتمد ومؤكد ✓</option>
+              </select>
+            </div>
+            <div style="display: flex; gap: 10px;">
+              <button type="button" id="btnExportCSV" class="btn btn-secondary">
+                📥 تصدير Excel / CSV
+              </button>
+              <button type="button" id="btnAddManualOrder" class="btn">
+                + حجز تليفوني يدوي
+              </button>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>العميل</th>
+                  <th>الهاتف</th>
+                  <th>الخدمة</th>
+                  <th>المبلغ والطريقة</th>
+                  <th>كود المعاملة</th>
+                  <th>الحالة</th>
+                  <th>التاريخ</th>
+                  <th style="text-align: center;">إجراءات</th>
+                </tr>
+              </thead>
+              <tbody id="ordersTableBody">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+          <div id="ordersEmptyState" style="text-align: center; padding: 40px; color: var(--text-muted); display: none;">
+            لا توجد طلبات مسجلة حتى الآن. أي حجز جديد من العملاء سيظهر هنا فوراً.
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 2: LIVE STATS -->
+      <div id="tab-stats" class="tab-pane">
+        <div class="card" style="max-width: 620px;">
+          <h3 style="font-size: 18px; font-weight: 800; margin-bottom: 8px;">التحكم في أرقام الصفحة الرئيسية</h3>
+          <p style="font-size: 13.5px; color: var(--text-muted); margin-bottom: 24px;">يمكنك تعديل أي رقم ليظهر مباشرة لجميع زوار المنصة في الواجهة:</p>
+
+          <form id="statsForm">
+            <div style="margin-bottom: 16px;">
+              <label style="display: block; font-size: 13px; font-weight: 700; margin-bottom: 6px;">عداد الزيارات الحقيقية للمنصة</label>
+              <input type="number" id="inputStatVisitors" class="form-input" min="0" required>
+            </div>
+
+            <div style="margin-bottom: 16px;">
+              <label style="display: block; font-size: 13px; font-weight: 700; margin-bottom: 6px;">عداد الاستشارات المكتملة</label>
+              <input type="number" id="inputStatConsultations" class="form-input" min="0" required>
+            </div>
+
+            <div style="margin-bottom: 16px;">
+              <label style="display: block; font-size: 13px; font-weight: 700; margin-bottom: 6px;">عداد المشاريع المنجزة</label>
+              <input type="number" id="inputStatProjects" class="form-input" min="0" required>
+            </div>
+
+            <button type="submit" class="btn btn-success" style="width: 100%; margin-top: 8px;">
+              ✓ حفظ وتطبيق الأرقام على الموقع
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- TAB 3: PAYMENTS & PRICING -->
+      <div id="tab-payments" class="tab-pane">
+        <div class="card" style="max-width: 620px;">
+          <h3 style="font-size: 18px; font-weight: 800; margin-bottom: 8px;">بيانات الدفع والأسعار المعروضة</h3>
+          <p style="font-size: 13.5px; color: var(--text-muted); margin-bottom: 24px;">البيانات المحدثة المعتمدة لمنصة BIZNOVA:</p>
+
+          <div style="background: rgba(8, 18, 32, 0.6); border: 1px solid var(--card-border); border-radius: 12px; padding: 20px; font-size: 14.5px; line-height: 2;">
+            <div>💰 <strong>السعر الموحد:</strong> 7,500 ج.م</div>
+            <div>📱 <strong>رقم الواتساب الرسمي:</strong> <a href="https://wa.me/201285059906" target="_blank" style="color: var(--orange); text-decoration: none; font-weight: 700;">01285059906</a></div>
+            <div>📞 <strong>محفظة فودافون كاش:</strong> 01091106722</div>
+            <div>🏦 <strong>إنستا باي (InstaPay):</strong> 01116281034 / albobmo@instapay</div>
+            <div>💳 <strong>رابط بوابة Paymob:</strong> <a href="https://paymob.link/z3ngE" target="_blank" style="color: #60A5FA; text-decoration: none;">https://paymob.link/z3ngE</a></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+    const FIREBASE_DB_URL = 'https://biznova-34a5c-default-rtdb.firebaseio.com';
+
+    const AdminApp = {
+      isAuthenticated: false,
+      ordersCache: [],
+      statsCache: { visitors: 0, consultations: 0, projects: 0 },
+      pollTimer: null,
+
+      init: function() {
+        this.bindEvents();
+        // Check session auth
+        if (sessionStorage.getItem('biznova_admin_auth') === 'true') {
+          this.unlock();
+        }
+      },
+
+      unlock: function() {
+        this.isAuthenticated = true;
+        sessionStorage.setItem('biznova_admin_auth', 'true');
+        document.getElementById('pinOverlay').style.display = 'none';
+        document.getElementById('dashboardApp').style.display = 'block';
+        
+        // Initial render
+        this.render();
+
+        // Start auto-sync polling every 10 seconds
+        if (!this.pollTimer) {
+          this.pollTimer = setInterval(() => {
+            this.render(true);
+          }, 10000);
+        }
+      },
+
+      bindEvents: function() {
+        // PIN Submit
+        document.getElementById('pinForm').addEventListener('submit', (e) => {
+          e.preventDefault();
+          const val = document.getElementById('pinInput').value.trim();
+          if (val === '2026') {
+            this.unlock();
+          } else {
+            document.getElementById('pinError').style.display = 'block';
+            document.getElementById('pinInput').focus();
+          }
+        });
+
+        // Logout
+        document.getElementById('btnLogout').addEventListener('click', () => {
+          sessionStorage.removeItem('biznova_admin_auth');
+          if (this.pollTimer) clearInterval(this.pollTimer);
+          window.location.reload();
+        });
+
+        // Refresh Data button
+        document.getElementById('btnRefreshData')?.addEventListener('click', () => {
+          const btn = document.getElementById('btnRefreshData');
+          const orig = btn.innerHTML;
+          btn.innerHTML = '⏳ جاري التحديث...';
+          btn.disabled = true;
+          this.render().finally(() => {
+            btn.innerHTML = orig;
+            btn.disabled = false;
+          });
+        });
+
+        // Tabs
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const target = btn.getAttribute('data-tab');
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+            document.getElementById('tab-' + target)?.classList.add('active');
+          });
+        });
+
+        // Search & Filter
+        document.getElementById('orderSearch')?.addEventListener('input', () => this.renderTable());
+        document.getElementById('orderFilter')?.addEventListener('change', () => this.renderTable());
+
+        // Export CSV
+        document.getElementById('btnExportCSV')?.addEventListener('click', () => this.exportCSV());
+
+        // Add manual order
+        document.getElementById('btnAddManualOrder')?.addEventListener('click', () => this.addManualOrder());
+
+        // Stats Form
+        document.getElementById('statsForm')?.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const v = parseInt(document.getElementById('inputStatVisitors').value, 10) || 0;
+          const c = parseInt(document.getElementById('inputStatConsultations').value, 10) || 0;
+          const p = parseInt(document.getElementById('inputStatProjects').value, 10) || 0;
+
+          try {
+            await fetch(`${FIREBASE_DB_URL}/stats.json`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ visitors: v, consultations: c, projects: p })
+            });
+            this.statsCache = { visitors: v, consultations: c, projects: p };
+            this.renderKPIs();
+            alert('✓ تم حفظ وتحديث الأرقام السحابية في Firebase بنجاح!');
+          } catch(err) {
+            alert('حدث خطأ أثناء الاتصال بقاعدة البيانات: ' + err.message);
+          }
+        });
+      },
+
+      fetchData: async function() {
+        try {
+          // Fetch leads
+          const leadsRes = await fetch(`${FIREBASE_DB_URL}/leads.json`);
+          const leadsData = await leadsRes.json();
+          if (leadsData && typeof leadsData === 'object') {
+            this.ordersCache = Object.keys(leadsData).map(k => ({
+              ...leadsData[k],
+              _id: k
+            })).sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
+          } else {
+            this.ordersCache = [];
+          }
+
+          // Fetch stats
+          const statsRes = await fetch(`${FIREBASE_DB_URL}/stats.json`);
+          const statsData = await statsRes.json();
+          if (statsData && typeof statsData === 'object') {
+            this.statsCache = {
+              visitors: typeof statsData.visitors === 'number' ? statsData.visitors : 0,
+              consultations: typeof statsData.consultations === 'number' ? statsData.consultations : 0,
+              projects: typeof statsData.projects === 'number' ? statsData.projects : 0
+            };
+          }
+        } catch(e) {
+          console.warn('Firebase sync notice:', e);
+        }
+      },
+
+      render: async function(isBackground = false) {
+        if (!isBackground) {
+          const syncInd = document.getElementById('cloudSyncStatus');
+          if (syncInd) syncInd.textContent = '⏳ جاري المزامنة...';
+        }
+
+        await this.fetchData();
+
+        const syncInd = document.getElementById('cloudSyncStatus');
+        if (syncInd) syncInd.textContent = '🟢 متصل بالسحابة (Firebase Live)';
+
+        this.renderKPIs();
+        this.renderTable();
+        this.populateForms();
+      },
+
+      renderKPIs: function() {
+        const orders = this.ordersCache;
+        const total = orders.length;
+        const pending = orders.filter(o => o.status === 'pending_verification').length;
+        const paid = orders.filter(o => o.status === 'paid' || o.status === 'free_confirmed').length;
+        const revenue = orders.filter(o => o.status === 'paid').length * 7500;
+        const visitors = this.statsCache.visitors || 0;
+
+        document.getElementById('kpiTotal').textContent = total.toLocaleString('ar-EG');
+        document.getElementById('kpiPending').textContent = pending.toLocaleString('ar-EG');
+        document.getElementById('kpiRevenue').textContent = revenue.toLocaleString('ar-EG') + ' ج.م';
+        document.getElementById('kpiVisitors').textContent = visitors.toLocaleString('ar-EG');
+      },
+
+      renderTable: function() {
+        const tbody = document.getElementById('ordersTableBody');
+        const emptyState = document.getElementById('ordersEmptyState');
+        if (!tbody) return;
+
+        let orders = [...this.ordersCache];
+        const query = document.getElementById('orderSearch')?.value?.toLowerCase()?.trim() || '';
+        const filter = document.getElementById('orderFilter')?.value || 'all';
+
+        if (filter !== 'all') orders = orders.filter(o => o.status === filter);
+        if (query) {
+          orders = orders.filter(o =>
+            (o.name && o.name.toLowerCase().includes(query)) ||
+            (o.phone && o.phone.includes(query)) ||
+            (o.txnId && o.txnId.toLowerCase().includes(query)) ||
+            (o.service && o.service.toLowerCase().includes(query))
+          );
+        }
+
+        if (orders.length === 0) {
+          tbody.innerHTML = '';
+          if (emptyState) emptyState.style.display = 'block';
+          return;
+        }
+
+        if (emptyState) emptyState.style.display = 'none';
+
+        tbody.innerHTML = orders.map((o, idx) => {
+          const isPaid = (o.status === 'paid' || o.status === 'free_confirmed');
+          const badge = isPaid ? '<span class="badge-paid">✓ معتمد ومؤكد</span>' : '<span class="badge-pending">⏳ قيد المراجعة</span>';
+          const cleanPhone = (o.phone || '').replace(/[^0-9]/g, '');
+          const waNum = cleanPhone.startsWith('0') ? '2' + cleanPhone : cleanPhone;
+          const waLink = waNum ? `https://wa.me/${waNum}?text=${encodeURIComponent(`مرحباً أستاذ ${o.name}، بخصوص طلب حجز خدمة "${o.service}" عبر منصة BIZNOVA`)}` : '#';
+          const dateStr = o.date ? new Date(o.date).toLocaleDateString('ar-EG', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—';
+
+          return `
+            <tr>
+              <td><strong style="color: var(--text-muted);">#${orders.length - idx}</strong></td>
+              <td>
+                <strong style="color: #FFF;">${o.name || 'بدون اسم'}</strong>
+                <div style="font-size: 11.5px; color: var(--text-muted);">${o.email || '—'}</div>
+              </td>
+              <td dir="ltr" style="text-align: right; font-family: monospace;">${o.phone || '—'}</td>
+              <td><span style="font-weight: 700; color: var(--orange);">${o.service || 'استشارة'}</span></td>
+              <td>
+                <strong>${o.amount || '7,500 ج.م'}</strong>
+                <div style="font-size: 11.5px; color: var(--text-muted);">${o.method || 'محفظة'}</div>
+              </td>
+              <td><code style="background: rgba(255,255,255,0.08); padding: 3px 6px; border-radius: 4px; color: #FBBF24;">${o.txnId || '—'}</code></td>
+              <td>${badge}</td>
+              <td style="font-size: 12px; color: var(--text-muted);">${dateStr}</td>
+              <td style="text-align: center;">
+                <div style="display: flex; gap: 6px; justify-content: center; flex-wrap: wrap;">
+                  ${!isPaid ? `
+                    <button type="button" class="btn btn-success" style="padding: 5px 10px; font-size: 12px;" onclick="AdminApp.approveOrder('${o._id}')">
+                      ✓ اعتماد
+                    </button>
+                  ` : ''}
+                  ${waNum ? `
+                    <a href="${waLink}" target="_blank" rel="noopener noreferrer" class="btn" style="padding: 5px 10px; font-size: 12px; background: #25D366; text-decoration: none;">
+                      📲 واتساب
+                    </a>
+                  ` : ''}
+                  <button type="button" class="btn btn-danger" style="padding: 5px 10px; font-size: 12px;" onclick="AdminApp.deleteOrder('${o._id}')">
+                    🗑️
+                  </button>
+                </div>
+              </td>
+            </tr>
+          `;
+        }).join('');
+      },
+
+      approveOrder: async function(leadId) {
+        try {
+          // 1. Update lead status in Firebase
+          await fetch(`${FIREBASE_DB_URL}/leads/${leadId}.json`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status: 'paid' })
+          });
+
+          // 2. Increment consultations in stats.json
+          const res = await fetch(`${FIREBASE_DB_URL}/stats.json`);
+          const curStats = (await res.json()) || { visitors: 0, consultations: 0, projects: 0 };
+          const newCons = (parseInt(curStats.consultations, 10) || 0) + 1;
+          await fetch(`${FIREBASE_DB_URL}/stats.json`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ consultations: newCons })
+          });
+
+          await this.render();
+          alert('✓ تم اعتماد سداد طلب العميل بنجاح وتحديث العداد المركزي!');
+        } catch(err) {
+          alert('حدث خطأ أثناء الاعتماد: ' + err.message);
+        }
+      },
+
+      deleteOrder: async function(leadId) {
+        if (!confirm('هل أنت متأكد من حذف هذا الطلب نهائياً من قاعدة البيانات السحابية؟')) return;
+        try {
+          await fetch(`${FIREBASE_DB_URL}/leads/${leadId}.json`, {
+            method: 'DELETE'
+          });
+          await this.render();
+          alert('✓ تم حذف الطلب بنجاح.');
+        } catch(err) {
+          alert('حدث خطأ أثناء الحذف: ' + err.message);
+        }
+      },
+
+      addManualOrder: async function() {
+        const name = prompt('اسم العميل:');
+        if (!name) return;
+        const phone = prompt('رقم هاتف / واتساب العميل:') || '';
+        const service = prompt('الخدمة المطلوبة:', 'استشارة ريادية خاصة') || 'استشارة ريادية خاصة';
+        const method = prompt('طريقة التحويل:', 'فودافون كاش') || 'فودافون كاش';
+        const isPaid = confirm('هل تم تأكيد واستلام السداد بالفعل؟');
+
+        const lead = {
+          name: name,
+          phone: phone,
+          email: '',
+          service: service,
+          amount: '7,500 ج.م',
+          method: method,
+          txnId: 'MANUAL-' + Math.floor(100000 + Math.random() * 900000),
+          status: isPaid ? 'paid' : 'pending_verification',
+          date: new Date().toISOString()
+        };
+
+        try {
+          await fetch(`${FIREBASE_DB_URL}/leads.json`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(lead)
+          });
+
+          if (isPaid) {
+            const res = await fetch(`${FIREBASE_DB_URL}/stats.json`);
+            const curStats = (await res.json()) || { visitors: 0, consultations: 0, projects: 0 };
+            const newCons = (parseInt(curStats.consultations, 10) || 0) + 1;
+            await fetch(`${FIREBASE_DB_URL}/stats.json`, {
+              method: 'PATCH',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ consultations: newCons })
+            });
+          }
+
+          await this.render();
+          alert('✓ تم تسجيل وحفظ الطلب في قاعدة البيانات السحابية بنجاح!');
+        } catch(err) {
+          alert('حدث خطأ أثناء تسجيل الطلب: ' + err.message);
+        }
+      },
+
+      exportCSV: function() {
+        const orders = this.ordersCache;
+        if (orders.length === 0) {
+          alert('لا توجد طلبات لتصديرها.');
+          return;
+        }
+        let csv = '\uFEFFالاسم,الهاتف,البريد,الخدمة,المبلغ,طريقة الدفع,كود المعاملة,الحالة,التاريخ\n';
+        orders.forEach(o => {
+          csv += `"${o.name || ''}","${o.phone || ''}","${o.email || ''}","${o.service || ''}","${o.amount || ''}","${o.method || ''}","${o.txnId || ''}","${o.status}","${o.date || ''}"\n`;
+        });
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `biznova_orders_${new Date().toISOString().slice(0, 10)}.csv`;
+        a.click();
+      },
+
+      populateForms: function() {
+        document.getElementById('inputStatVisitors').value = this.statsCache.visitors || 0;
+        document.getElementById('inputStatConsultations').value = this.statsCache.consultations || 0;
+        document.getElementById('inputStatProjects').value = this.statsCache.projects || 0;
+      }
+    };
+
+    window.AdminApp = AdminApp;
+    AdminApp.init();
+  </script>
+</body>
+</html>
