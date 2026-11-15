@@ -35,12 +35,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const liveStatToast = document.getElementById('liveStatToast');
   const liveStatToastText = document.getElementById('liveStatToastText');
 
-  // Reset any legacy mock numbers from previous local test runs so counts strictly start from 0
-  if (localStorage.getItem('biznova_stats_production_zero_v4') !== 'true') {
+  // Reset all numbers strictly to ZERO as requested by the owner
+  if (localStorage.getItem('biznova_stats_clean_zero_v10') !== 'true') {
     localStorage.setItem('biznova_stat_consultations', '0');
     localStorage.setItem('biznova_stat_visitors', '0');
     localStorage.setItem('biznova_stat_projects', '0');
-    localStorage.setItem('biznova_stats_production_zero_v4', 'true');
+    localStorage.setItem('biznova_stats_clean_zero_v10', 'true');
   }
 
   const LiveStats = {
@@ -108,13 +108,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       } else {
         // Standalone preview mode: track session visit starting from 0
-        if (!sessionStorage.getItem('biznova_session_visited_v3')) {
-          sessionStorage.setItem('biznova_session_visited_v3', '1');
-          let currentVisits = parseInt(localStorage.getItem('biznova_stat_visitors') || '0', 10);
-          currentVisits += 1;
-          localStorage.setItem('biznova_stat_visitors', currentVisits);
-        }
-        this.render();
+        // Track real visitor counts starting from 0, incrementing on each visit/reload
+        let currentVisits = parseInt(localStorage.getItem('biznova_stat_visitors') || '0', 10);
+        currentVisits += 1;
+        localStorage.setItem('biznova_stat_visitors', currentVisits);
+        this.render('visitors');
       }
     },
     recordConsultation: function(clientName, serviceTitle, clientPhone = '', clientEmail = '', projectBrief = '', paymentInfo = {}) {
@@ -427,7 +425,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (whatsappBtn) {
       const priceContext = (!isFree && item.price) ? ` (المعروضة بسعر يبدأ من ${item.price})` : '';
       const msg = encodeURIComponent(`مرحباً منصة BIZNOVA، أرغب في حجز واستشارة بخصوص خدمة "${item.name}"${priceContext}.`);
-      whatsappBtn.href = `https://wa.me/201091106722?text=${msg}`;
+      whatsappBtn.href = `https://wa.me/201285059906?text=${msg}`;
     }
   };
 
@@ -727,7 +725,7 @@ document.addEventListener('DOMContentLoaded', () => {
         paymentMethodTitle: `بوابة بايموب مصر الرسمية (مرجع: ${code})`,
         status: 'paid',
         customTxnId: 'PAYMOB-' + code,
-        customWhatsappNumber: '201091106722'
+        customWhatsappNumber: '201285059906'
       });
     });
   }
@@ -853,7 +851,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const proofFile = walletProofFileInput?.files?.[0];
         if (!proofFile) {
-          const proceedWithout = confirm('تنبيه هام:\nلم تقم بإرفاق سكرين شوت إشعار التحويل.\n\nهل تود المتابعة وإرسال صورة الإشعار مباشرة عبر واتساب إلى 01091106722 لاعتماد الحجز فوراً؟');
+          const proceedWithout = confirm('تنبيه هام:\nلم تقم بإرفاق سكرين شوت إشعار التحويل.\n\nهل تود المتابعة وإرسال صورة الإشعار مباشرة عبر واتساب إلى 01285059906 لاعتماد الحجز فوراً؟');
           if (!proceedWithout) return;
         }
 
@@ -862,7 +860,7 @@ document.addEventListener('DOMContentLoaded', () => {
           paymentMethodTitle: `فودافون كاش (محفظة: ${wSender} • كود: ${refCode})`,
           status: 'pending_verification',
           customTxnId: txnId,
-          customWhatsappNumber: '201091106722'
+          customWhatsappNumber: '201285059906'
         });
         return;
       }
@@ -907,7 +905,7 @@ document.addEventListener('DOMContentLoaded', () => {
           paymentMethodTitle: `فوري باي Fawry Pay (كود السداد: ${fawryCode})`,
           status: 'pending_verification',
           customTxnId: txnId,
-          customWhatsappNumber: '201091106722'
+          customWhatsappNumber: '201285059906'
         });
         return;
       }
@@ -917,7 +915,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Global state for last pending booking simulation
   window.lastPendingBooking = null;
 
-  const proceedWithVerification = ({ paymentMethodTitle, status = 'pending_verification', customTxnId = null, customWhatsappNumber = '201091106722' }) => {
+  const proceedWithVerification = ({ paymentMethodTitle, status = 'pending_verification', customTxnId = null, customWhatsappNumber = '201285059906' }) => {
     if (btnExecutePayment) {
       btnExecutePayment.disabled = false;
       btnExecutePayment.innerHTML = `
@@ -976,7 +974,7 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   // Helper to populate Step 3 Receipt Card
-  const populateReceiptCard = ({ txnId, clientName, service, amount, method, phone, status, customWhatsappNumber = '201091106722' }) => {
+  const populateReceiptCard = ({ txnId, clientName, service, amount, method, phone, status, customWhatsappNumber = '201285059906' }) => {
     const isPaid = (status === 'paid');
 
     if (successClientName) successClientName.textContent = clientName;
@@ -1107,7 +1105,7 @@ document.addEventListener('DOMContentLoaded', () => {
       method: 'بوابة دفع إلكترونية معتمدة (Paymob / Bank Gateway)',
       phone: phoneVal,
       status: 'paid',
-      customWhatsappNumber: '201091106722'
+      customWhatsappNumber: '201285059906'
     });
     goToStep(3);
 
@@ -1642,7 +1640,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <button type="button" class="recommend-btn-book" data-service-book="${prof.key}" data-context="${userContext}">
             🚀 حجز هذه الخدمة الآن (${prof.price})
           </button>
-          <a href="https://wa.me/201091106722?text=${whatsappMsg}" target="_blank" rel="noopener noreferrer" class="recommend-btn-whatsapp">
+          <a href="https://wa.me/201285059906?text=${whatsappMsg}" target="_blank" rel="noopener noreferrer" class="recommend-btn-whatsapp">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.592 2.654-.697c.974.534 1.745.819 2.806.819l.004-.001c3.182 0 5.768-2.587 5.769-5.766.001-3.182-2.585-5.769-5.767-5.769zm3.435 8.163c-.144.405-.838.775-1.17.825-.313.05-.718.077-2.146-.514-1.825-.756-3.003-2.616-3.094-2.738-.091-.121-.741-.986-.741-1.881s.467-1.334.633-1.517c.166-.183.363-.228.484-.228.121 0 .242.001.348.006.111.006.26-.042.406.31.15.36.514 1.25.56 1.341.045.091.076.198.015.319-.06.121-.091.198-.182.304-.091.106-.192.236-.274.316-.091.091-.186.19-.08.373.106.183.471.777 1.013 1.26.697.621 1.285.813 1.468.904.183.091.29.076.398-.045.108-.121.465-.541.591-.728.126-.186.251-.157.422-.091.171.066 1.084.511 1.27.603.186.091.31.137.355.213.046.076.046.442-.098.847z"/></svg>
             <span>مناقشة التفاصيل عبر واتساب</span>
           </a>
